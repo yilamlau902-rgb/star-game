@@ -1,0 +1,1047 @@
+filter: drop-shadow(0 0 12px rgba(255, 230, 100, 0.9));
+        }
+        /* Alarm Emergency Red Glow */
+        .alarm-flash {
+            animation: red-alarm 1s infinite alternate;
+        }
+        @keyframes red-alarm {
+            0% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《大自然的文字》古水手夜航星空大冒險</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Cartoon Style -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
+            background-color: #050b14;
+            overflow: hidden;
+        }
+        /* Custom Glowing & Anime Styles */
+        .glow-title {
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(255, 165, 0, 0.5);
+        }
+        .glow-star {2); border-color: #f59e0b; }
+            100% { box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.8); border-color: #ef4444; }
+        }
+        .cartoon-card {
+            background: rgba(13, 27, 42, 0.88);
+            backdrop-filter: blur(16px);
+            border: 4px solid #f59e0b;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.7), inset 0 0 15px rgba(245, 158, 11, 0.2);
+        }
+        .btn-cartoon {
+            background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+            box-shadow: 0 6px 0 #92400e, 0 10px 15px rgba(0,0,0,0.4);
+            transition: all 0.1s ease;
+        }
+        .btn-cartoon:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #92400e, 0 4px 6px rgba(0,0,0,0.4);
+        }
+        .btn-blue {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            box-shadow: 0 6px 0 #0369a1, 0 10px 15px rgba(0,0,0,0.4);
+        }
+        .btn-blue:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0369a1;
+        }
+        /* Custom Tooltip Animation */
+        .bounce-anim {
+            animation: bounce 1.2s infinite alternate;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body class="w-screen h-screen relative flex flex-col justify-between overflow-hidden">
+
+    <!-- Game Background Canvas (Starfield, Constellations & Waves) -->
+    <canvas id="gameCanvas" class="absolute inset-0 z-0"></canvas>
+
+    <!-- Top UI Header -->
+    <header class="relative z-10 w-full px-4 pt-3 flex justify-between items-start pointer-events-none">
+        <!-- Level Progress Badge & Floating Hint / Avatar Character -->
+        <div id="dialogueContainer" class="pointer-events-auto w-full max-w-lg transition-all duration-300">
+            <!-- Stage Badge & Timer -->
+            <div class="cartoon-card px-4 py-2.5 rounded-2xl flex items-center justify-between gap-3 border-amber-400 mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-black text-lg shadow-inner">
+                        <i class="fa-solid fa-ship"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs text-amber-300 font-bold tracking-wider uppercase">古水手航海賽</div>
+                        <div id="stageTitleText" class="text-white text-base md:text-lg font-black">第 1 關：穿越虛幻夜空</div>
+                    </div>
+                </div>
+                <!-- Speedrun Timer Badge -->
+                <div class="flex items-center gap-2">
+                    <div id="playerBadge" class="bg-amber-500 text-slate-950 font-black px-3 py-1 rounded-xl text-xs sm:text-sm">
+                        👤 選手 1 / 3
+                    </div>
+                    <div id="timerDisplay" class="bg-rose-950/80 border border-rose-500/50 text-rose-300 px-3 py-1 rounded-xl text-sm md:text-base font-black tracking-wider shadow-inner">
+                        ⏱️ <span id="timeText">00.0</span>s
+                    </div>
+                    <span id="stepCounter" class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-full font-bold border border-amber-500/30">關卡 1 / 3</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sound Toggle Button -->
+        <div class="pointer-events-auto flex gap-2">
+            <button id="bgmBtn" class="w-11 h-11 rounded-2xl bg-slate-800/90 text-amber-400 border-2 border-amber-400/50 flex items-center justify-center text-xl shadow-lg hover:scale-105 active:scale-95 transition">
+                <i class="fa-solid fa-music"></i>
+            </button>
+            <button id="sfxBtn" class="w-11 h-11 rounded-2xl bg-slate-800/90 text-cyan-400 border-2 border-cyan-400/50 flex items-center justify-center text-xl shadow-lg hover:scale-105 active:scale-95 transition">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Intro Story Splash Modal -->
+    <div id="introModal" class="pointer-events-auto absolute inset-0 z-50 bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center">
+        <div id="introCard" class="cartoon-card max-w-md w-full p-6 rounded-3xl space-y-4 border-amber-400 relative overflow-hidden">
+            <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-amber-600 to-amber-400 border-4 border-white flex items-center justify-center text-4xl shadow-lg">
+                ⏱️🏆
+            </div>
+            <div class="inline-block bg-amber-500 text-slate-950 font-black text-xs px-3 py-1 rounded-full uppercase tracking-wider">
+                🏆 三人速解龍虎榜競賽 🏆
+            </div>
+            <h2 class="text-2xl font-black text-amber-300 glow-title">
+                「航海家們，<br/>誰才是最快的夜航之王？」
+            </h2>
+            <div class="text-slate-200 text-xs sm:text-sm font-medium leading-relaxed bg-slate-900/90 p-4 rounded-2xl border border-amber-500/30 text-left space-y-3">
+                <p>將邀請 <strong class="text-amber-300">3 位同學</strong> 輪流挑戰！每次星空位置皆不同。</p>
+                <div>
+                    <label class="block text-xs font-bold text-amber-300 mb-1">請輸入第 <span id="currentPlayerNum">1</span> 位選手姓名：</label>
+                    <input type="text" id="playerNameInput" value="同學 A" class="w-full bg-slate-800 border-2 border-amber-400 rounded-xl px-3 py-2 text-white font-bold text-center focus:outline-none focus:border-amber-300">
+                </div>
+            </div>
+            <button id="startIntroBtn" class="w-full btn-cartoon text-slate-950 font-black py-3.5 rounded-2xl text-lg tracking-wider flex items-center justify-center gap-2">
+                <span>⚡️ 開始挑戰！</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Action / Next Player Modal Banner -->
+    <div id="winModal" class="pointer-events-auto hidden absolute inset-0 z-50 bg-slate-950/90 flex flex-col items-center justify-center p-6 text-center">
+        <div class="cartoon-card max-w-md w-full p-6 md:p-8 rounded-3xl space-y-5 border-amber-400">
+            <div class="text-6xl">🎉</div>
+            <h2 class="text-2xl md:text-3xl font-black text-amber-300 glow-title">導航成功！</h2>
+            
+            <!-- Result Time Card -->
+            <div class="bg-amber-500/10 border-2 border-amber-400 p-4 rounded-2xl space-y-1">
+                <div id="winnerPlayerName" class="text-amber-300 font-black text-base">選手姓名</div>
+                <div class="text-xs text-amber-200/70 font-bold uppercase tracking-wider">完成時間</div>
+                <div id="finalScoreTime" class="text-3xl md:text-4xl font-black text-white glow-title">00.0 秒</div>
+            </div>
+
+            <button id="restartBtn" class="w-full btn-cartoon text-slate-950 font-black py-3.5 rounded-2xl text-lg tracking-wider">
+                <i class="fa-solid fa-user-plus mr-2"></i> <span id="nextPlayerBtnText">換下一位同學挑戰</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Final Leaderboard Modal (龍虎榜) -->
+    <div id="leaderboardModal" class="pointer-events-auto hidden absolute inset-0 z-50 bg-slate-950/95 backdrop-blur-md flex flex-col items-center justify-center p-4 text-center">
+        <div class="cartoon-card max-w-lg w-full p-6 rounded-3xl space-y-5 border-amber-400 relative overflow-hidden">
+            <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-yellow-400 to-amber-600 border-4 border-white flex items-center justify-center text-4xl shadow-2xl">
+                👑
+            </div>
+            <h2 class="text-3xl font-black text-amber-300 glow-title">
+                🏆 航海家夜航龍虎榜 🏆
+            </h2>
+            <p class="text-slate-300 text-xs">恭喜三位航海家完成挑戰！以下是速度排行榜：</p>
+
+            <!-- Leaderboard Items Container -->
+            <div id="leaderboardList" class="space-y-3">
+                <!-- Dynamically Inserted Ranked Items -->
+            </div>
+
+            <button id="resetCompetitionBtn" class="w-full btn-cartoon text-slate-950 font-black py-3.5 rounded-2xl text-lg tracking-wider flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>重新開始全新 3 人競賽</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Game Story Dialogue & Interactive Hub (Center/Bottom Area) -->
+    <main class="relative z-10 flex-1 flex flex-col justify-end items-center px-4 pb-2 pointer-events-none">
+        
+        <!-- Wheel Controls for Stage 3 -->
+        <div id="wheelContainer" class="pointer-events-auto hidden flex-col items-center gap-2 mb-2">
+            <div class="text-amber-300 text-xs md:text-sm font-black bg-slate-900/90 px-4 py-1.5 rounded-full border border-amber-400 shadow-xl bounce-anim">
+                👇 轉動船舵，將船頭與指針對準星空中的「北極星」！
+            </div>
+            <div class="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center">
+                <img id="shipWheel" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%2378350f' stroke='%23fbbf24' stroke-width='4'/><circle cx='50' cy='50' r='32' fill='%23451a03' stroke='%23f59e0b' stroke-width='3'/><circle cx='50' cy='50' r='12' fill='%23fbbf24'/><g stroke='%23fbbf24' stroke-width='4' stroke-linecap='round'><line x1='50' y1='4' x2='50' y2='96'/><line x1='4' y1='50' x2='96' y2='50'/><line x1='17.5' y1='17.5' x2='82.5' y2='82.5'/><line x1='17.5' y1='82.5' x2='82.5' y2='17.5'/></g></svg>" 
+                     class="w-full h-full cursor-grab active:cursor-grabbing transition-transform duration-75 select-none drop-shadow-2xl" alt="Wheel">
+            </div>
+            <div class="flex items-center gap-4 bg-slate-950/80 px-4 py-1.5 rounded-2xl border border-slate-700">
+                <span class="text-xs text-slate-300">目前航向：<strong id="currentHeadingText" class="text-rose-400">偏離中</strong></span>
+            </div>
+        </div>
+
+        <!-- Notification Banner Toast for Dialogue/Hints -->
+        <div id="toastNotification" class="pointer-events-auto opacity-0 transition-opacity duration-300 bg-slate-900/95 border-2 border-amber-400 px-5 py-3 rounded-2xl text-amber-200 text-xs sm:text-sm font-bold shadow-2xl mb-4 max-w-md text-center">
+            <span id="toastText"></span>
+        </div>
+
+    </main>
+
+    <!-- Bottom Decorative Ship HUD -->
+    <footer class="relative z-10 w-full px-4 pb-4 flex justify-between items-end pointer-events-none">
+        <!-- Ship Stats -->
+        <div class="pointer-events-auto glass-panel bg-slate-900/90 border border-slate-700 p-3 rounded-2xl flex items-center gap-3">
+            <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center text-sm font-bold">
+                <i class="fa-solid fa-compass"></i>
+            </div>
+            <div class="text-xs">
+                <div class="text-slate-400">北方標記定位</div>
+                <div id="polarisStatusText" class="text-amber-400 font-bold">未鎖定</div>
+            </div>
+        </div>
+
+        <!-- Quick Hint Button -->
+        <button id="hintBtn" class="pointer-events-auto btn-blue px-4 py-2.5 rounded-xl text-white font-bold text-xs flex items-center gap-2">
+            <i class="fa-solid fa-lightbulb"></i> 魔法羅盤提示
+        </button>
+    </footer>
+
+    <!-- Game Engine & Interactive Audio/Canvas JS -->
+    <script>
+        /**
+         * 🌌 Canvas Game Engine & State Initialization
+         */
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let currentStage = 1;
+        let hintActive = false;
+
+        // Competition & Timer Variables
+        let currentPlayerIndex = 0; // 0, 1, 2 for 3 players
+        let playersData = [
+            { name: '同學 A', time: 0 },
+            { name: '同學 B', time: 0 },
+            { name: '同學 C', time: 0 }
+        ];
+
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isTimerRunning = false;
+
+        let toastTimeout = null;
+        function triggerDialogue(text) {
+            const toast = document.getElementById('toastNotification');
+            const toastText = document.getElementById('toastText');
+            if (!toast || !toastText) return;
+
+            toastText.innerText = text;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+
+            if (toastTimeout) clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 4000);
+        }
+
+        /**
+         * 🎡 Sound Effects Class
+         */
+        class SoundEffects {
+            constructor() {
+                this.ctx = null;
+                this.bgmNode = null;
+                this.isMutedBgm = false;
+                this.isMutedSfx = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playStarClick(freq = 523.25) {
+                if (this.isMutedSfx) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, this.ctx.currentTime + 0.15);
+                
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.3);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.3);
+            }
+
+            playError() {
+                if (this.isMutedSfx) return;
+                this.init();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, this.ctx.currentTime);
+                osc.frequency.linearRampToValueAtTime(90, this.ctx.currentTime + 0.25);
+                
+                gain.gain.setValueAtTime(0.25, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.25);
+            }
+
+            playSuccess() {
+                if (this.isMutedSfx) return;
+                this.init();
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
+                    setTimeout(() => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                        gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.4);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start();
+                        osc.stop(this.ctx.currentTime + 0.4);
+                    }, idx * 100);
+                });
+            }
+
+            startSeaBgm() {
+                if (this.bgmNode || this.isMutedBgm) return;
+                this.init();
+                
+                const bufferSize = this.ctx.sampleRate * 2;
+                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+                const output = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+
+                const whiteNoise = this.ctx.createBufferSource();
+                whiteNoise.buffer = buffer;
+                whiteNoise.loop = true;
+
+                const filter = this.ctx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(300, this.ctx.currentTime);
+
+                const lfo = this.ctx.createOscillator();
+                lfo.frequency.value = 0.2;
+                const lfoGain = this.ctx.createGain();
+                lfoGain.gain.value = 200;
+
+                lfo.connect(lfoGain);
+                lfoGain.connect(filter.frequency);
+
+                const masterGain = this.ctx.createGain();
+                masterGain.gain.value = 0.08;
+
+                whiteNoise.connect(filter);
+                filter.connect(masterGain);
+                masterGain.connect(this.ctx.destination);
+
+                whiteNoise.start();
+                lfo.start();
+
+                this.bgmNode = { whiteNoise, lfo, masterGain };
+            }
+
+            stopSeaBgm() {
+                if (this.bgmNode) {
+                    this.bgmNode.whiteNoise.stop();
+                    this.bgmNode.lfo.stop();
+                    this.bgmNode = null;
+                }
+            }
+        }
+
+        const sound = new SoundEffects();
+
+        function startTimer() {
+            startTime = Date.now();
+            isTimerRunning = true;
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (isTimerRunning) {
+                    elapsedTime = (Date.now() - startTime) / 1000;
+                    document.getElementById('timeText').innerText = elapsedTime.toFixed(1);
+                }
+            }, 100);
+        }
+
+        function stopTimer() {
+            isTimerRunning = false;
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        // Background Star Field
+        let backgroundStars = [];
+
+        // Constellations template definitions
+        const ursaMinorBase = {
+            id: 'ursa_minor',
+            name: '小熊星座',
+            isTarget: true,
+            stars: [
+                { id: 'p0', x: 0, y: 0, isPolaris: true, label: '北極星' },
+                { id: 'p1', x: -35, y: 30 },
+                { id: 'p2', x: -65, y: 55 },
+                { id: 'p3', x: -105, y: 68 },
+                { id: 'p4', x: -140, y: 98 },
+                { id: 'p5', x: -100, y: 120 },
+                { id: 'p6', x: -155, y: 135 }
+            ],
+            lines: [[0,1], [1,2], [2,3], [3,4], [4,6], [6,5], [5,3]]
+        };
+
+        const orionBase = {
+            id: 'orion',
+            name: '獵戶座',
+            isTarget: false,
+            stars: [
+                { x: -30, y: -45 }, { x: 30, y: -50 },
+                { x: -15, y: 0 }, { x: 0, y: 2 }, { x: 15, y: 4 },
+                { x: -35, y: 48 }, { x: 35, y: 45 }
+            ],
+            lines: [[0,1], [0,2], [1,4], [2,3], [3,4], [2,5], [4,6]]
+        };
+
+        const cassiopeiaBase = {
+            id: 'cassiopeia',
+            name: '仙后座',
+            isTarget: false,
+            stars: [
+                { x: -50, y: 15 }, { x: -25, y: -15 },
+                { x: 0, y: 12 }, { x: 30, y: -20 }, { x: 60, y: 8 }
+            ],
+            lines: [[0,1], [1,2], [2,3], [3,4]]
+        };
+
+        let constellations = [];
+        let selectedConstellation = null;
+        let selectedPolaris = false;
+        let shipHeading = 120;
+
+        // Randomize constellation positions for competition replay
+        function randomizeConstellationPositions() {
+            const regionSlots = [
+                { x: 0.25, y: 0.32 },
+                { x: 0.52, y: 0.35 },
+                { x: 0.78, y: 0.32 }
+            ];
+
+            regionSlots.sort(() => Math.random() - 0.5);
+
+            const getPos = (basePos) => ({
+                x: basePos.x + (Math.random() * 0.06 - 0.03),
+                y: basePos.y + (Math.random() * 0.05 - 0.025)
+            });
+
+            const ursaMinorData = { ...ursaMinorBase, center: getPos(regionSlots[0]) };
+            const orionData = { ...orionBase, center: getPos(regionSlots[1]) };
+            const cassiopeiaData = { ...cassiopeiaBase, center: getPos(regionSlots[2]) };
+
+            constellations = [ursaMinorData, orionData, cassiopeiaData];
+        }
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            initStarfield();
+        }
+
+        function initStarfield() {
+            backgroundStars = [];
+            const count = Math.floor((width * height) / 2200);
+            for (let i = 0; i < count; i++) {
+                backgroundStars.push({
+                    x: Math.random() * width,
+                    y: Math.random() * (height * 0.7),
+                    size: Math.random() * 2 + 0.5,
+                    alpha: Math.random() * 0.8 + 0.2,
+                    speed: Math.random() * 0.01 + 0.005
+                });
+            }
+        }
+
+        /**
+         * 🎨 Main Render Loop
+         */
+        function renderScene(time) {
+            ctx.clearRect(0, 0, width, height);
+
+            const skyGrad = ctx.createLinearGradient(0, 0, 0, height * 0.75);
+            skyGrad.addColorStop(0, '#020617');
+            skyGrad.addColorStop(0.5, '#0B132B');
+            skyGrad.addColorStop(1, '#1C2541');
+            ctx.fillStyle = skyGrad;
+            ctx.fillRect(0, 0, width, height * 0.75);
+
+            backgroundStars.forEach(s => {
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                const alpha = Math.max(0.1, Math.min(0.9, s.alpha + Math.sin(time * 0.002 + s.x) * 0.3));
+                ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+                ctx.fill();
+            });
+
+            constellations.forEach(c => {
+                const cx = c.center.x * width;
+                const cy = c.center.y * height;
+
+                const isUrsaDiscovered = (currentStage >= 2 && c.isTarget);
+                const isSelected = (selectedConstellation === c.id);
+
+                if (isUrsaDiscovered || isSelected || hintActive) {
+                    ctx.strokeStyle = c.isTarget ? 'rgba(251, 191, 36, 0.8)' : 'rgba(148, 163, 184, 0.4)';
+                    ctx.lineWidth = c.isTarget ? 3 : 1.5;
+                    ctx.setLineDash(c.isTarget ? [] : [4, 4]);
+
+                    c.lines.forEach(([i1, i2]) => {
+                        const s1 = c.stars[i1];
+                        const s2 = c.stars[i2];
+                        ctx.beginPath();
+                        ctx.moveTo(cx + s1.x, cy + s1.y);
+                        ctx.lineTo(cx + s2.x, cy + s2.y);
+                        ctx.stroke();
+                    });
+                    ctx.setLineDash([]);
+                }
+
+                c.stars.forEach((st) => {
+                    const sx = cx + st.x;
+                    const sy = cy + st.y;
+
+                    ctx.beginPath();
+                    if (st.isPolaris) {
+                        const isPolarisUnlocked = (currentStage === 3);
+                        const radius = isPolarisUnlocked ? 8 : 4;
+
+                        ctx.arc(sx, sy, radius, 0, Math.PI * 2);
+                        ctx.fillStyle = isPolarisUnlocked ? '#38bdf8' : ((isUrsaDiscovered && c.isTarget) ? '#fbbf24' : '#cbd5e1');
+                        if (isPolarisUnlocked) {
+                            ctx.shadowColor = '#38bdf8';
+                            ctx.shadowBlur = 20;
+                        }
+                        ctx.fill();
+                        ctx.shadowBlur = 0;
+
+                        c.polarisScreenPos = { x: sx, y: sy };
+                    } else {
+                        ctx.arc(sx, sy, 4, 0, Math.PI * 2);
+                        ctx.fillStyle = (isUrsaDiscovered && c.isTarget) ? '#fbbf24' : '#cbd5e1';
+                        ctx.fill();
+                    }
+                });
+
+                c.screenCenter = { x: cx, y: cy };
+            });
+
+            // Ocean Wave Rendering
+            const seaY = height * 0.72;
+            ctx.fillStyle = '#030712';
+            ctx.fillRect(0, seaY, width, height - seaY);
+
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.moveTo(0, seaY);
+            for (let x = 0; x <= width; x += 30) {
+                const y = seaY + Math.sin(x * 0.01 + time * 0.003) * 8;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#1e293b';
+            ctx.beginPath();
+            ctx.moveTo(0, seaY + 10);
+            for (let x = 0; x <= width; x += 40) {
+                const y = seaY + 12 + Math.cos(x * 0.015 + time * 0.004) * 6;
+                ctx.lineTo(x, y);
+            }
+            ctx.lineTo(width, height);
+            ctx.lineTo(0, height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Ship Rendering
+            const shipX = width * 0.5 + Math.sin(time * 0.001) * 10;
+            const shipY = seaY + Math.sin(time * 0.002) * 5 - 15;
+            
+            const ursa = constellations.find(c => c.isTarget);
+            const polarisPos = ursa ? ursa.polarisScreenPos : null;
+
+            drawCartoonShip(ctx, shipX, shipY, shipHeading, polarisPos, currentStage, time);
+
+            requestAnimationFrame(renderScene);
+        }
+
+        function drawCartoonShip(ctx, x, y, headingAngle, polarisPos, stage, time) {
+            ctx.save();
+
+            let targetAngle = 0;
+            let isAligned = false;
+
+            if (polarisPos) {
+                const dx = polarisPos.x - x;
+                const dy = polarisPos.y - (y - 50);
+                const angleRad = Math.atan2(dy, dx);
+                targetAngle = angleRad * (180 / Math.PI) + 90;
+
+                let angleDiff = Math.abs(headingAngle - targetAngle);
+                angleDiff = Math.min(angleDiff, 360 - angleDiff);
+                isAligned = angleDiff < 10;
+            }
+
+            // Dynamic Aiming Line to Polaris in Stage 3
+            if (stage === 3 && polarisPos) {
+                ctx.save();
+                
+                const dx = polarisPos.x - x;
+                const dy = polarisPos.y - (y - 50);
+                const targetDist = Math.hypot(dx, dy); 
+                
+                const rad = (headingAngle - 90) * Math.PI / 180;
+                
+                const rayEndX = x + Math.cos(rad) * targetDist;
+                const rayEndY = (y - 50) + Math.sin(rad) * targetDist;
+
+                ctx.beginPath();
+                ctx.moveTo(x, y - 50);
+                ctx.lineTo(rayEndX, rayEndY);
+                
+                ctx.strokeStyle = isAligned ? '#34d399' : 'rgba(244, 63, 94, 0.6)';
+                ctx.lineWidth = isAligned ? 4 : 2;
+                ctx.setLineDash([8, 6]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                ctx.beginPath();
+                ctx.arc(rayEndX, rayEndY, isAligned ? 14 : 8, 0, Math.PI * 2);
+                ctx.strokeStyle = isAligned ? '#34d399' : '#f43f5e';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                if (isAligned) {
+                    ctx.beginPath();
+                    ctx.arc(polarisPos.x, polarisPos.y, 20 + Math.sin(time * 0.01) * 4, 0, Math.PI * 2);
+                    ctx.strokeStyle = '#34d399';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            ctx.translate(x, y);
+
+            ctx.fillStyle = '#78350f';
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.moveTo(-50, 0);
+            ctx.lineTo(50, 0);
+            ctx.lineTo(35, 22);
+            ctx.lineTo(-35, 22);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#451a03';
+            ctx.fillRect(-3, -50, 6, 50);
+
+            ctx.fillStyle = '#fef3c7';
+            ctx.strokeStyle = '#d97706';
+            ctx.lineWidth = 2.5;
+
+            ctx.beginPath();
+            ctx.moveTo(3, -45);
+            ctx.quadraticCurveTo(30, -25, 3, -10);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = '#ef4444';
+            ctx.beginPath();
+            ctx.moveTo(0, -50);
+            ctx.lineTo(-20, -42);
+            ctx.lineTo(0, -34);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.save();
+            ctx.translate(0, -65);
+            ctx.rotate((headingAngle) * Math.PI / 180);
+
+            ctx.beginPath();
+            ctx.arc(0, 0, 14, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+            ctx.strokeStyle = isAligned ? '#34d399' : '#fbbf24';
+            ctx.lineWidth = 2;
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.fillStyle = isAligned ? '#34d399' : '#f43f5e';
+            ctx.shadowColor = isAligned ? '#34d399' : '#f43f5e';
+            ctx.shadowBlur = isAligned ? 15 : 5;
+
+            ctx.beginPath();
+            ctx.moveTo(0, -22);
+            ctx.lineTo(9, 6);
+            ctx.lineTo(0, 2);
+            ctx.lineTo(-9, 6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            ctx.restore();
+
+            ctx.restore();
+        }
+
+        /**
+         * 🎯 Canvas Click Event
+         */
+        canvas.addEventListener('click', (e) => {
+            if (!isTimerRunning) return;
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+
+            if (currentStage === 1) {
+                let hitTarget = false;
+                constellations.forEach(c => {
+                    const dist = Math.hypot(clickX - c.screenCenter.x, clickY - c.screenCenter.y);
+                    if (dist < 100) {
+                        if (c.isTarget) {
+                            hitTarget = true;
+                            selectedConstellation = c.id;
+                            sound.playSuccess();
+                            currentStage = 2;
+                            document.getElementById('stepCounter').innerText = '關卡 2 / 3';
+                            document.getElementById('stageTitleText').innerText = '第 2 關：找出導航樞紐';
+                            triggerDialogue('🎉 太棒了！你順利指認出了【小熊星座】！請用你的眼睛觀察並點擊那顆發光的【北極星】！');
+                        } else {
+                            sound.playError();
+                            triggerDialogue('❌ 那不是小熊星座喔！仔細看看哪一個星座像一支「小勺子」？');
+                        }
+                    }
+                });
+            } else if (currentStage === 2) {
+                const ursa = constellations.find(c => c.isTarget);
+                if (ursa) {
+                    const cx = ursa.center.x * width;
+                    const cy = ursa.center.y * height;
+                    ursa.stars.forEach(st => {
+                        const sx = cx + st.x;
+                        const sy = cy + st.y;
+                        const dist = Math.hypot(clickX - sx, clickY - sy);
+                        if (dist < 30) {
+                            if (st.isPolaris) {
+                                sound.playSuccess();
+                                currentStage = 3;
+                                selectedPolaris = true;
+                                document.getElementById('stepCounter').innerText = '關卡 3 / 3';
+                                document.getElementById('stageTitleText').innerText = '第 3 關：校準正北航向';
+                                document.getElementById('polarisStatusText').innerText = '已鎖定 (正北)';
+                                document.getElementById('polarisStatusText').className = 'text-emerald-400 font-bold';
+                                
+                                wheelContainer.classList.remove('hidden');
+                                wheelContainer.classList.add('flex');
+                                triggerDialogue('🌟 成功辨識北極星！請轉動下方船舵，將船頭瞄準這顆發光的北極星！');
+                            } else {
+                                sound.playError();
+                                triggerDialogue('🤔 這顆星雖然亮，但不是北極星喔！再想想看北極星在小熊座的哪個關鍵位置？');
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        /**
+         * 🎡 Wheel Control Drag Logic
+         */
+        const shipWheel = document.getElementById('shipWheel');
+        const wheelContainer = document.getElementById('wheelContainer');
+        const currentHeadingText = document.getElementById('currentHeadingText');
+        const winModal = document.getElementById('winModal');
+
+        let isDraggingWheel = false;
+        let startAngle = 0;
+        let currentWheelRotation = 120;
+
+        function getAngle(x, y) {
+            const rect = shipWheel.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            return Math.atan2(y - centerY, x - centerX) * (180 / Math.PI);
+        }
+
+        const handleStart = (e) => {
+            if (currentStage !== 3) return;
+            isDraggingWheel = true;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            startAngle = getAngle(clientX, clientY) - currentWheelRotation;
+        };
+
+        const handleMove = (e) => {
+            if (!isDraggingWheel || currentStage !== 3) return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let deg = getAngle(clientX, clientY) - startAngle;
+            deg = ((deg + 180) % 360) - 180;
+            
+            currentWheelRotation = deg;
+            shipHeading = deg;
+            shipWheel.style.transform = `rotate(${currentWheelRotation}deg)`;
+
+            const shipX = width * 0.5;
+            const seaY = height * 0.72;
+            const shipY = seaY - 15;
+            const ursa = constellations.find(c => c.isTarget);
+            
+            if (ursa && ursa.polarisScreenPos) {
+                const dx = ursa.polarisScreenPos.x - shipX;
+                const dy = ursa.polarisScreenPos.y - (shipY - 50);
+                const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                
+                let diff = Math.abs(currentWheelRotation - targetAngle);
+                diff = Math.min(diff, 360 - diff);
+
+                if (diff < 10) {
+                    currentHeadingText.innerText = '🎯 已成功對準北極星！';
+                    currentHeadingText.className = 'text-emerald-400 font-bold';
+                } else {
+                    currentHeadingText.innerText = `角度偏離 ${Math.round(diff)}°`;
+                    currentHeadingText.className = 'text-rose-400 font-bold';
+                }
+            }
+        };
+
+        const handleEnd = () => {
+            if (!isDraggingWheel) return;
+            isDraggingWheel = false;
+
+            const shipX = width * 0.5;
+            const seaY = height * 0.72;
+            const shipY = seaY - 15;
+            const ursa = constellations.find(c => c.isTarget);
+
+            if (ursa && ursa.polarisScreenPos) {
+                const dx = ursa.polarisScreenPos.x - shipX;
+                const dy = ursa.polarisScreenPos.y - (shipY - 50);
+                const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI) + 90;
+                
+                let diff = Math.abs(currentWheelRotation - targetAngle);
+                diff = Math.min(diff, 360 - diff);
+
+                if (diff < 12) {
+                    stopTimer();
+                    sound.playSuccess();
+                    
+                    playersData[currentPlayerIndex].time = elapsedTime;
+
+                    document.getElementById('winnerPlayerName').innerText = `👤 選手：${playersData[currentPlayerIndex].name}`;
+                    document.getElementById('finalScoreTime').innerText = `${elapsedTime.toFixed(1)} 秒`;
+                    
+                    const nextBtnText = document.getElementById('nextPlayerBtnText');
+                    if (currentPlayerIndex < 2) {
+                        nextBtnText.innerText = `換第 ${currentPlayerIndex + 2} 位同學挑戰 (${playersData[currentPlayerIndex + 1].name})`;
+                    } else {
+                        nextBtnText.innerText = `查看【龍虎榜】最終成績 🏆`;
+                    }
+
+                    setTimeout(() => {
+                        winModal.classList.remove('hidden');
+                    }, 500);
+                }
+            }
+        };
+
+        shipWheel.addEventListener('mousedown', handleStart);
+        window.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+
+        shipWheel.addEventListener('touchstart', handleStart, { passive: true });
+        window.addEventListener('touchmove', handleMove, { passive: true });
+        window.addEventListener('touchend', handleEnd);
+
+        /**
+         * 🏆 Leaderboard Render Logic
+         */
+        function renderLeaderboard() {
+            const leaderboardList = document.getElementById('leaderboardList');
+            leaderboardList.innerHTML = '';
+
+            const sorted = [...playersData].sort((a, b) => a.time - b.time);
+
+            const medals = ['🥇 第一名', '🥈 第二名', '🥉 第三名'];
+            const medalStyles = [
+                'bg-gradient-to-r from-amber-500/30 to-yellow-500/10 border-amber-400 text-amber-300 font-black scale-105 shadow-lg',
+                'bg-gradient-to-r from-slate-400/20 to-slate-300/10 border-slate-300 text-slate-200 font-bold',
+                'bg-gradient-to-r from-amber-700/20 to-amber-600/10 border-amber-600 text-amber-400 font-bold'
+            ];
+
+            sorted.forEach((player, idx) => {
+                const card = document.createElement('div');
+                card.className = `p-3.5 rounded-2xl border flex items-center justify-between ${medalStyles[idx]}`;
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-sm px-2.5 py-1 rounded-xl bg-slate-900 border border-current">${medals[idx]}</span>
+                        <span class="text-base text-white font-extrabold">${player.name}</span>
+                    </div>
+                    <div class="text-lg font-black tracking-wider text-amber-300">${player.time.toFixed(1)} 秒</div>
+                `;
+                leaderboardList.appendChild(card);
+            });
+
+            document.getElementById('leaderboardModal').classList.remove('hidden');
+        }
+
+        /**
+         * 🔘 UI Buttons
+         */
+        document.getElementById('bgmBtn').addEventListener('click', () => {
+            sound.isMutedBgm = !sound.isMutedBgm;
+            const btn = document.getElementById('bgmBtn');
+            if (sound.isMutedBgm) {
+                sound.stopSeaBgm();
+                btn.classList.add('opacity-50');
+            } else {
+                sound.startSeaBgm();
+                btn.classList.remove('opacity-50');
+            }
+        });
+
+        document.getElementById('sfxBtn').addEventListener('click', () => {
+            sound.isMutedSfx = !sound.isMutedSfx;
+            const btn = document.getElementById('sfxBtn');
+            if (sound.isMutedSfx) {
+                btn.classList.add('opacity-50');
+            } else {
+                btn.classList.remove('opacity-50');
+            }
+        });
+
+        document.getElementById('hintBtn').addEventListener('click', () => {
+            sound.playStarClick(600);
+            hintActive = true;
+            setTimeout(() => { hintActive = false; }, 2500);
+
+            if (currentStage === 1) {
+                triggerDialogue('💡 魔法羅盤提示：尋找星空中呈「勺子形狀」的星群！');
+            } else if (currentStage === 2) {
+                triggerDialogue('💡 魔法羅盤提示：北極星位在小熊座其中一個端點！');
+            } else {
+                triggerDialogue('💡 魔法羅盤提示：轉動船舵，直到紅色射線精準指在亮藍色的北極星上！');
+            }
+        });
+
+        document.getElementById('restartBtn').addEventListener('click', () => {
+            if (currentPlayerIndex < 2) {
+                currentPlayerIndex++;
+                startNewTurn();
+            } else {
+                winModal.classList.add('hidden');
+                renderLeaderboard();
+            }
+        });
+
+        function startNewTurn() {
+            currentStage = 1;
+            selectedConstellation = null;
+            selectedPolaris = false;
+            shipHeading = 120;
+            currentWheelRotation = 120;
+            shipWheel.style.transform = `rotate(120deg)`;
+
+            randomizeConstellationPositions();
+
+            document.getElementById('playerBadge').innerText = `👤 ${playersData[currentPlayerIndex].name} (${currentPlayerIndex + 1}/3)`;
+            document.getElementById('stepCounter').innerText = '關卡 1 / 3';
+            document.getElementById('stageTitleText').innerText = '第 1 關：穿越虛幻夜空';
+            document.getElementById('polarisStatusText').innerText = '未鎖定';
+            document.getElementById('polarisStatusText').className = 'text-amber-400 font-bold';
+
+            wheelContainer.classList.add('hidden');
+            wheelContainer.classList.remove('flex');
+            winModal.classList.add('hidden');
+
+            triggerDialogue(`「${playersData[currentPlayerIndex].name} 上場！請憑你的智慧，在這片隨機星海中找出真正的【小熊星座】！」`);
+            startTimer();
+        }
+
+        document.getElementById('resetCompetitionBtn').addEventListener('click', () => {
+            currentPlayerIndex = 0;
+            playersData = [
+                { name: '同學 A', time: 0 },
+                { name: '同學 B', time: 0 },
+                { name: '同學 C', time: 0 }
+            ];
+            document.getElementById('leaderboardModal').classList.add('hidden');
+            document.getElementById('currentPlayerNum').innerText = '1';
+            document.getElementById('playerNameInput').value = '同學 A';
+            document.getElementById('introModal').classList.remove('hidden');
+        });
+
+        document.getElementById('startIntroBtn').addEventListener('click', () => {
+            sound.init();
+            sound.startSeaBgm();
+            sound.playSuccess();
+            
+            const customName = document.getElementById('playerNameInput').value.trim();
+            if (customName) playersData[0].name = customName;
+
+            document.getElementById('introModal').classList.add('hidden');
+            currentPlayerIndex = 0;
+            startNewTurn();
+        });
+
+        window.addEventListener('resize', resizeCanvas);
+
+        window.onload = function() {
+            randomizeConstellationPositions();
+            resizeCanvas();
+            requestAnimationFrame(renderScene);
+        };
+    </script>
+</body>
+</html>
