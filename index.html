@@ -183,15 +183,15 @@ filter: drop-shadow(0 0 12px rgba(255, 230, 100, 0.9));
     <main class="relative z-10 flex-1 flex flex-col justify-end items-center px-4 pb-2 pointer-events-none">
         
         <!-- Wheel Controls for Stage 3 -->
-        <div id="wheelContainer" class="pointer-events-auto hidden flex-col items-center gap-2 mb-2">
-            <div class="text-amber-300 text-xs md:text-sm font-black bg-slate-900/90 px-4 py-1.5 rounded-full border border-amber-400 shadow-xl bounce-anim">
-                👇 轉動船舵，將船頭與指針對準星空中的「北極星」！
+        <div id="wheelContainer" class="pointer-events-auto hidden flex-col items-center gap-1.5 mb-1 scale-90 md:scale-100">
+            <div class="text-amber-300 text-xs font-black bg-slate-900/90 px-3 py-1 rounded-full border border-amber-400 shadow-xl bounce-anim">
+                👇 轉動船舵，將船頭對準「北極星」！
             </div>
-            <div class="relative w-40 h-40 md:w-48 md:h-48 flex items-center justify-center">
+            <div class="relative w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
                 <img id="shipWheel" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='42' fill='%2378350f' stroke='%23fbbf24' stroke-width='4'/><circle cx='50' cy='50' r='32' fill='%23451a03' stroke='%23f59e0b' stroke-width='3'/><circle cx='50' cy='50' r='12' fill='%23fbbf24'/><g stroke='%23fbbf24' stroke-width='4' stroke-linecap='round'><line x1='50' y1='4' x2='50' y2='96'/><line x1='4' y1='50' x2='96' y2='50'/><line x1='17.5' y1='17.5' x2='82.5' y2='82.5'/><line x1='17.5' y1='82.5' x2='82.5' y2='17.5'/></g></svg>" 
                      class="w-full h-full cursor-grab active:cursor-grabbing transition-transform duration-75 select-none drop-shadow-2xl" alt="Wheel">
             </div>
-            <div class="flex items-center gap-4 bg-slate-950/80 px-4 py-1.5 rounded-2xl border border-slate-700">
+            <div class="flex items-center gap-3 bg-slate-950/80 px-3 py-1 rounded-xl border border-slate-700">
                 <span class="text-xs text-slate-300">目前航向：<strong id="currentHeadingText" class="text-rose-400">偏離中</strong></span>
             </div>
         </div>
@@ -526,21 +526,22 @@ filter: drop-shadow(0 0 12px rgba(255, 230, 100, 0.9));
                 const isUrsaDiscovered = (currentStage >= 2 && c.isTarget);
                 const isSelected = (selectedConstellation === c.id);
 
-                if (isUrsaDiscovered || isSelected || hintActive) {
-                    ctx.strokeStyle = c.isTarget ? 'rgba(251, 191, 36, 0.8)' : 'rgba(148, 163, 184, 0.4)';
-                    ctx.lineWidth = c.isTarget ? 3 : 1.5;
-                    ctx.setLineDash(c.isTarget ? [] : [4, 4]);
+                // 星座連線：已預先繪製連線，幫助學生直接從圖形辨識星座
+                ctx.strokeStyle = c.isTarget 
+                    ? (isUrsaDiscovered ? 'rgba(251, 191, 36, 0.9)' : 'rgba(251, 191, 36, 0.5)') 
+                    : 'rgba(148, 163, 184, 0.35)';
+                ctx.lineWidth = c.isTarget ? (isUrsaDiscovered ? 3 : 2) : 1.5;
+                ctx.setLineDash(c.isTarget ? [] : [4, 4]);
 
-                    c.lines.forEach(([i1, i2]) => {
-                        const s1 = c.stars[i1];
-                        const s2 = c.stars[i2];
-                        ctx.beginPath();
-                        ctx.moveTo(cx + s1.x, cy + s1.y);
-                        ctx.lineTo(cx + s2.x, cy + s2.y);
-                        ctx.stroke();
-                    });
-                    ctx.setLineDash([]);
-                }
+                c.lines.forEach(([i1, i2]) => {
+                    const s1 = c.stars[i1];
+                    const s2 = c.stars[i2];
+                    ctx.beginPath();
+                    ctx.moveTo(cx + s1.x, cy + s1.y);
+                    ctx.lineTo(cx + s2.x, cy + s2.y);
+                    ctx.stroke();
+                });
+                ctx.setLineDash([]);
 
                 c.stars.forEach((st) => {
                     const sx = cx + st.x;
