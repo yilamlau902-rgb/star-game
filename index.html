@@ -526,12 +526,12 @@ filter: drop-shadow(0 0 12px rgba(255, 230, 100, 0.9));
                 const isUrsaDiscovered = (currentStage >= 2 && c.isTarget);
                 const isSelected = (selectedConstellation === c.id);
 
-                // 星座連線：已預先繪製連線，幫助學生直接從圖形辨識星座
-                ctx.strokeStyle = c.isTarget 
-                    ? (isUrsaDiscovered ? 'rgba(251, 191, 36, 0.9)' : 'rgba(251, 191, 36, 0.5)') 
-                    : 'rgba(148, 163, 184, 0.35)';
-                ctx.lineWidth = c.isTarget ? (isUrsaDiscovered ? 3 : 2) : 1.5;
-                ctx.setLineDash(c.isTarget ? [] : [4, 4]);
+                // 統一所有星座線條：未發現前全部為淡灰色虛線，辨識出來後小熊座才亮起黃色
+                ctx.strokeStyle = (isUrsaDiscovered && c.isTarget)
+                    ? 'rgba(251, 191, 36, 0.9)'
+                    : 'rgba(148, 163, 184, 0.45)';
+                ctx.lineWidth = (isUrsaDiscovered && c.isTarget) ? 3 : 1.5;
+                ctx.setLineDash((isUrsaDiscovered && c.isTarget) ? [] : [4, 4]);
 
                 c.lines.forEach(([i1, i2]) => {
                     const s1 = c.stars[i1];
